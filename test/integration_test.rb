@@ -1,9 +1,9 @@
 require 'test_helper'
 require 'root/root_v2_api'
-require 'smart_proxy_plugin_template'
+require 'smart_proxy_remote_execution'
 
 # Test that the plugin loads and the Smart Proxy reports the correct feature
-class PluginTemplateFeaturesTest < Test::Unit::TestCase
+class RemoteExecutionFeaturesTest < Test::Unit::TestCase
   include Rack::Test::Methods
 
   def app
@@ -12,18 +12,18 @@ class PluginTemplateFeaturesTest < Test::Unit::TestCase
   end
 
   def load_config(*args, **kwargs)
-    Proxy::DefaultModuleLoader.any_instance.expects(:load_configuration_file).with('plugin_template.yml').returns(*args, **kwargs)
+    Proxy::DefaultModuleLoader.any_instance.expects(:load_configuration_file).with('remote_execution.yml').returns(*args, **kwargs)
   end
 
   def failed_module_log
-    Proxy::LogBuffer::Buffer.instance.info[:failed_modules][:plugin_template]
+    Proxy::LogBuffer::Buffer.instance.info[:failed_modules][:remote_execution]
   end
 
   def get_feature
     get '/features'
     assert last_response.ok?, "Last response was not ok: #{last_response.body}"
     response = JSON.parse(last_response.body)
-    feature = response['plugin_template']
+    feature = response['remote_execution']
     refute_nil(feature)
     feature
   end
@@ -34,7 +34,7 @@ class PluginTemplateFeaturesTest < Test::Unit::TestCase
     feature = get_feature
 
     assert_equal('failed', feature['state'], failed_module_log)
-    assert_equal("Disabling all modules in the group ['plugin_template'] due to a failure in one of them: File at '/must/exist' defined in 'required_path' parameter doesn't exist or is unreadable", failed_module_log)
+    assert_equal("Disabling all modules in the group ['remote_execution'] due to a failure in one of them: File at '/must/exist' defined in 'required_path' parameter doesn't exist or is unreadable", failed_module_log)
   end
 
   def test_features_with_file_present

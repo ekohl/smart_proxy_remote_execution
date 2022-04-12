@@ -1,12 +1,12 @@
 require 'test_helper'
-require 'smart_proxy_plugin_template/api'
+require 'smart_proxy_remote_execution/api'
 
 # Test that API returns the correct responses
-class PluginTemplateApiTest < Test::Unit::TestCase
+class RemoteExecutionApiTest < Test::Unit::TestCase
   include Rack::Test::Methods
 
   def app
-    Proxy::PluginTemplate::Api.new
+    Proxy::RemoteExecution::Api.new
   end
 
   def test_root
